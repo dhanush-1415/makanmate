@@ -17,6 +17,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function AddAddress({ open, handleClose, user }) {
 
+
   const [postalfetch , setPostalFetch ] = useState("Fetch");
   const [savebtn , setSaveBtn] = useState("Save Address");
   const [address, setAddress] = useState({
@@ -152,7 +153,7 @@ export default function AddAddress({ open, handleClose, user }) {
 
   return (
     <React.Fragment>
-      <ToastContainer/>
+      {/* <ToastContainer/> */}
       <Dialog
         open={open}
         TransitionComponent={Transition}

@@ -1,4 +1,4 @@
 export const makan = {
-    baseUrl: 'https://catchyfiveapi.appxes-erp.in',
-    orgId : 1,
+    baseUrl: 'https://panseasapi.appxes-erp.in',
+    orgId : 2,
   };

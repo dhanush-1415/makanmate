@@ -143,7 +143,7 @@ function Account() {
                     </Grid>
                     <Grid item md={8} sx={{ border: '1px solid #e9eef2' }}>
                         {activepage === 'accountsettings' && <AccountSettings user={user} />}
-                        {activepage === 'orders' && <Orders />}
+                        {activepage === 'orders' && <Orders user={user} />}
                         {activepage === 'address' && <Address user={user} />}
                         {activepage === 'change-password' && <Password user={user} />}
                     </Grid>

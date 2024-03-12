@@ -140,7 +140,7 @@ function Password({ user }) {
   return (
     <>
       <AuthCheck />
-      <ToastContainer />
+      {/* <ToastContainer /> */}
       <Grid container sx={{ padding: '30px' }}>
         <Typography sx={{ fontWeight: 'bold' }}>Change Password</Typography>
         <Grid container justifyContent="space-between" sx={{ padding: '10px 0px' }}>

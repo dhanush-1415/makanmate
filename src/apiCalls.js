@@ -260,7 +260,143 @@ export const registerUser = async (data) => {
 
 
   export const getAllCategories = async (data) => {
-    const url = `${makan.baseUrl}/Category/GetAllWithSubcategory?OrganizationId=${data.OrgId}`;
+
+    const url = `${makan.baseUrl}/Category/GetAll?OrganizationId=${data.OrgId}`;
+    const options = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    };
+  
+    return fetch(url, options).then(
+      (response) => {
+        return response.json();
+      },
+      (error) => {
+        return error;
+      }
+    );
+  };
+
+
+
+  export const getProductData = async (data) => {
+
+    const url = `${makan.baseUrl}/Product/GetAllWithImage?OrganizationId=${data.OrgId}&ProductCode=${data.code}`;
+    const options = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    };
+  
+    return fetch(url, options).then(
+      (response) => {
+        return response.json();
+      },
+      (error) => {
+        return error;
+      }
+    );
+  };
+
+
+
+  export const addWishlist = async (data) => {
+    const url = `${makan.baseUrl}/B2CCustomerWishList/Create`;
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    };
+
+    try {
+      const response = await fetch(url, options);
+      if (!response.ok) {
+        throw new Error('Failed to verify OTP');
+      }
+      return response.json();
+    } catch (error) {
+      console.error('Error Verifying OTP:', error);
+      throw error;
+    }
+  };
+
+
+  
+  export const getWishlistData = async (data) => {
+
+    const url = `${makan.baseUrl}/B2CCustomerWishList/GetByCustomer?OrganizationId=${data.OrgId}&CustomerId=${data.code}`;
+    const options = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    };
+  
+    return fetch(url, options).then(
+      (response) => {
+        return response.json();
+      },
+      (error) => {
+        return error;
+      }
+    );
+  };
+
+
+  export const removeWishlistData = async (data) => {
+
+    const url = `${makan.baseUrl}/B2CCustomerWishList/Remove?OrganizationId=${data.OrgId}&CustomerId=${data.code}&ProductCode=${data.pcode}&UserName=User`;
+
+    console.log(url , "oooooooooooo")
+    const options = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    };
+  
+    return fetch(url, options).then(
+      (response) => {
+        return response.json();
+      },
+      (error) => {
+        return error;
+      }
+    );
+  };
+
+
+  export const createCustomerOrder = async (data) => {
+    const url = `${makan.baseUrl}/B2CCustomerOrder/Create`;
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    };
+
+    try {
+      const response = await fetch(url, options);
+      if (!response.ok) {
+        throw new Error('Failed to make order');
+      }
+      return response.json();
+    } catch (error) {
+      console.error('Error making order:', error);
+      throw error;
+    }
+  };
+
+
+
+  export const getAllOrders = async (data) => {
+    const url = `${makan.baseUrl}/B2CCustomerOrder/GetHeaderSearch?searchModel.organisationId=${data.OrgId}&searchModel.customerCode=${data.B2CCustomerId}`;
     const options = {
       method: 'GET',
       headers: {

@@ -87,7 +87,7 @@ function Address(user) {
   return (
     <>
       <AuthCheck />
-      <ToastContainer/>
+      {/* <ToastContainer/> */}
       <Dialog
         open={open}
         TransitionComponent={Transition}

@@ -1,0 +1,53 @@
+.date-input-container {
+    margin: 20px;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight:bold;
+  }
+  
+  input {
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 200px;
+    box-sizing: border-box;
+  }
+  
+
+  .checkout{
+    box-shadow:0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12) !important;
+  }
+
+
+
+  .combtn3 {
+    background-color: #ff4d04 !important;
+    width: 20%;
+    padding: 13px !important;
+    font-weight: bold !important;
+    color: white !important;
+}
+
+@media screen and (max-width: 500px) {
+    .combtn3 {
+        width: 49% !important;
+    }
+    .checkout{
+        margin-top:50px !important;
+        padding-top:20px !important;
+    }
+}
+
+    .combtn3:hover{
+        border: 2px solid #ff4d04 !important;
+        color: #ff4d04 !important;
+        background-color: white !important;
+    }
+
+    .accordion-button::after{
+      display:none !important;
+    }

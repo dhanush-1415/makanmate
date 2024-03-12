@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { Grid, TextField, Typography ,Button } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
@@ -7,7 +7,10 @@ import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import { toast } from 'react-toastify';
 import Paper from '@mui/material/Paper';
+import OrderDetails from './orderDetails';
+import { getAllOrders } from '../../apiCalls';
 import './common.css';
 
 
@@ -31,17 +34,34 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein };
-}
 
-const rows = [
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
+function Orders(user) {
 
-];
+  const [orderData, setOrderData] = useState([]);
+
+  useEffect(()=>{
+    if(user.user && user.user.length){
+      getAllOrders(user.user[0])
+      .then((data)=>{
+        if(data.Data && data.Data.length){
+          setOrderData(data.Data);
+        }
+      })
+      .catch((error) => {
+        toast.error(error);
+      });
+    }
+  },[user , orderData]);
 
 
-function Orders() {
+
+  const [isOrderDetailSidebarOpen, setOrderDetailSidebarOpen] = useState(false);
+
+  const toggleOrderDetailSidebar = () => {
+    setOrderDetailSidebarOpen(!isOrderDetailSidebarOpen);
+  };
+
+
   return (
     <>
       <Grid container sx={{padding:'30px'}}>
@@ -59,15 +79,21 @@ function Orders() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {rows.map((row) => (
+                {orderData && orderData.length && orderData.map((row) => (
                   <StyledTableRow key={row.name}>
                     <StyledTableCell component="th" scope="row">
-                      {row.name}
+                      {row.OrderNo}
                     </StyledTableCell>
-                    <StyledTableCell>{row.calories}</StyledTableCell>
-                    <StyledTableCell>{row.fat}</StyledTableCell>
-                    <StyledTableCell>{row.carbs}</StyledTableCell>
-                    <StyledTableCell>{row.protein}</StyledTableCell>
+                    <StyledTableCell>{row.OrderDateString}</StyledTableCell>
+                    <StyledTableCell>{row.Status}</StyledTableCell>
+                    <StyledTableCell>{row.NetTotal}</StyledTableCell>
+                    <StyledTableCell>
+                      <Grid>
+                      {/* <button onClick={toggleOrderDetailSidebar}>View</button> */}
+                      <button>View</button>
+                      <OrderDetails isOpen={isOrderDetailSidebarOpen} onClose={toggleOrderDetailSidebar} />
+                      </Grid>
+                    </StyledTableCell>
                   </StyledTableRow>
                 ))}
               </TableBody>

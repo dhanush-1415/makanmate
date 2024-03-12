@@ -85,7 +85,7 @@ const ScaleLoaderComponent = () => (
 );
 
 const SyncLoaderComponent = () => (
-  <SyncLoader color="#000" size={15} />
+  <SyncLoader color="#ff4d04" size={15} />
 );
 
 export {

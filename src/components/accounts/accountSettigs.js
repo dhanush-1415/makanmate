@@ -132,7 +132,7 @@ function AccountSettings({ user, isLogged }) {
   return (
     <>
 
-    <ToastContainer />
+    {/* <ToastContainer /> */}
     <AuthCheck />
       <Grid container sx={{ padding: '30px' }}>
         <Typography sx={{ fontWeight: 'bold' }}>Personal Information</Typography>

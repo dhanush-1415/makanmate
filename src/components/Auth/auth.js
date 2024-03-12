@@ -149,7 +149,19 @@ export default function Auth({ open, handleClose }) {
               })
               setTimeout(() => {
                 handleClose();
-              }, 2000);
+              }, 2000);              
+
+              const userId = response.Data.B2CCustomerId;
+              let cartArray = JSON.parse(localStorage.getItem('makanUserCart')) || {};
+
+              if (!cartArray[userId]) {
+                cartArray[userId] = {
+                  MATE: [],
+                  MART: [],
+                };
+                localStorage.setItem('makanUserCart', JSON.stringify(cartArray));
+              }
+
               localStorage.setItem('makanUserToken', JSON.stringify(response.Data));
               setLoggedIn();
             }
@@ -455,7 +467,7 @@ export default function Auth({ open, handleClose }) {
         aria-describedby="alert-dialog-slide-description"
         maxWidth="md"
       >
-      <ToastContainer
+      {/* <ToastContainer
         position="bottom-right"
         autoClose={5000}
         hideProgressBar={false}
@@ -466,7 +478,7 @@ export default function Auth({ open, handleClose }) {
         draggable
         pauseOnHover
         theme="colored"
-      />
+      /> */}
      <DialogContent sx={{border:'5px solid #ff4d04'}} >
         <Grid container direction="row">
             <Grid item md={6}>
@@ -565,7 +577,7 @@ export default function Auth({ open, handleClose }) {
         aria-describedby="alert-dialog-slide-description"
         maxWidth="md"
       >
-      <ToastContainer
+      {/* <ToastContainer
         position="bottom-right"
         autoClose={5000}
         hideProgressBar={false}
@@ -576,7 +588,7 @@ export default function Auth({ open, handleClose }) {
         draggable
         pauseOnHover
         theme="colored"
-      />
+      /> */}
       <DialogContent sx={{border:'5px solid #ff4d04'}} >
         <Grid container direction="row">
             <Grid item md={6} className="login-image-container">
