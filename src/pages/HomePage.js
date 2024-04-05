@@ -28,6 +28,8 @@ function Home() {
   const productContainerRef = useRef(null);
 
 
+
+
   setInterval(function() {
     setActivePage(getShopValue());
     setChangeCount(getCountValue());
@@ -35,19 +37,30 @@ function Home() {
 
   useEffect(() => {
 
+    // localStorage.clear();
+
+    // localStorage.removeItem('makanUserCart');
+
+    const cartArray = JSON.parse(localStorage.getItem('makanUserCart')) || {};
+
+
+    console.log(cartArray , "kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
+
+
     const fetchData = async () => {
       try {
         let response;
         if(category){
             if(category === 'All'){
-              response = await fetch(`http://154.26.130.251:302/Product/GetAllWithImage?OrganizationId=${makan.orgId}&&Type=${activeShop}&pageNo=${pageNo}&pageSize=20`);
+              response = await fetch(`${makan.baseUrl}/Product/GetAllWithImage?OrganizationId=${makan.orgId}&&BranchCode=${activeShop}&pageNo=${pageNo}&pageSize=20`);
             }else{
-              response = await fetch(`http://154.26.130.251:302/Product/GetAllWithImage?OrganizationId=${makan.orgId}&CategoryShortURL=${category}&Type=${activeShop}&pageNo=${pageNo}&pageSize=20`);
+              response = await fetch(`${makan.baseUrl}/Product/GetAllWithImage?OrganizationId=${makan.orgId}&CategoryShortURL=${category}&BranchCode=${activeShop}&pageNo=${pageNo}&pageSize=20`);
             }
         }else{
-           response = await fetch(`http://154.26.130.251:302/Product/GetAllWithImage?OrganizationId=${makan.orgId}&&Type=${activeShop}&pageNo=${pageNo}&pageSize=20`);
+           response = await fetch(`${makan.baseUrl}/Product/GetAllWithImage?OrganizationId=${makan.orgId}&&BranchCode=${activeShop}&pageNo=${pageNo}&pageSize=20`);
         }
         const result = await response.json();
+
         if(data && data.length){
           if(result.Result && result.Result.length){
             if(result.Result[0].BranchCode === data[0].BranchCode){
