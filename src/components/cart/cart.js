@@ -64,18 +64,31 @@ const ShoppingCartSidebar = ({dataArray, shop, subTotal, isOpen, onClose, remove
     window.location.href = `/product/${code}`;
   }
 
+  function truncateName(sentence, maxLength) {
+    if (sentence.length <= maxLength) {
+      return sentence;
+    }
+  
+    const truncated = sentence.substring(0, maxLength);
+    const lastSpaceIndex = truncated.lastIndexOf(' ');
+  
+    if (lastSpaceIndex === -1) {
+      return truncated + '...';
+    } else {
+      return truncated.substring(0, lastSpaceIndex) + '...';
+    }
+  }
+
+
   return (
     <Drawer
       anchor="right"
       open={isOpen}
       onClose={onClose}
       PaperProps={{
-        style: {
-          width: '30%',
+        sx: {
+          width: {xs:'100%' , sm:'100%' , md:'35%'},
           background: 'white',
-          '@media (max-width: 600px)': {
-            width: '100%', 
-          },
         },
       }}
     >
@@ -106,7 +119,7 @@ const ShoppingCartSidebar = ({dataArray, shop, subTotal, isOpen, onClose, remove
                 </Grid>
                 <Grid item md={6} sx={{display:'flex' , flexDirection:'column' , justifyContent:'space-evenly'}} >
                   <Grid onClick={(e)=>{handleProduct(product.Code)}}>
-                    <Typography>{product.ProductName}</Typography>
+                    <Typography>{truncateName(product.ProductName,45)}</Typography>
                   </Grid>
                   <Grid container className='cartCalc2'>
                     <Typography sx={{border:'1px solid grey' , borderRadius:'50%'}}>

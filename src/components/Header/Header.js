@@ -19,15 +19,21 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import Auth from '../Auth/auth';
 import { useAuth } from '../Auth/AuthContet';
 import { Link } from 'react-router-dom';
-import { setShopValue , setCountValue } from '../../utility';
+import { setShopValue , setCountValue, getShopValue } from '../../utility';
 import FavoriteSidebar from '../favourites/favourites';
 import ShoppingCartSidebar from '../cart/cart';
 import { getWishlistData , removeWishlistData , getProductData } from '../../apiCalls';
 import { makan } from '../../config';
 import {toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { useLocation } from 'react-router-dom';
+
 
 const Header = () => {
+
+  const location = useLocation();
+
   const [isSidebarOpen, setSidebarOpen] = useState(false);
 
   const toggleSidebar = () => {
@@ -68,6 +74,14 @@ const Header = () => {
     setCountValue(changeCount);
   },[changeCount])
 
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentShop(getShopValue());
+    }, 1000); // Update every second
+
+    return () => clearInterval(interval); // Cleanup function to clear interval
+  }, []);
 
   const [isFavoriteSidebarOpen, setFavoriteSidebarOpen] = useState(false);
   const [isShoppingCartSidebarOpen, setShoppingCartSidebarOpen] = useState(false);
@@ -237,7 +251,7 @@ const Header = () => {
         });
     }
 
-  },[currentShop , wishlistData ])
+  },[currentShop , wishlistData, changeCount ])
 
 
   const saveToCart = (data , count) => {
@@ -305,16 +319,56 @@ const Header = () => {
       {/* Mobile Header */}
       <AppBar  position='relative' sx={{  background:'white', display: { md: 'none', sm: 'block' }}}>
         <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            onClick={toggleSidebar}
-            sx={{ mr: 2, display: { md: 'none' } }}
-          >
-            <MenuIcon sx={{color:'black'}} />
-          </IconButton>
-          <img src='https://makanmate.com/wp-content/uploads/2022/09/logo.png' width='60px' alt='def1'/>
+          <Grid container justifyContent="space-between">
+            <Grid item>
+              <Grid container>
+                <Grid item>
+                    <IconButton
+                      color="inherit"
+                      aria-label="open drawer"
+                      edge="start"
+                      onClick={toggleSidebar}
+                      sx={{ mr: 2, display: { md: 'none' } }}
+                    >
+                      <MenuIcon sx={{color:'black'}} />
+                    </IconButton>
+                </Grid>
+                <Grid item>
+                    <img src='https://makanmate.com/wp-content/uploads/2022/09/logo.png' width='60px' alt='def1'/>
+                </Grid>
+              </Grid>
+            </Grid>
+            <Grid item sx={{display:'flex'}}>
+              <Grid container direction='row' justifyContent='space-evenly' alignItems='center'>
+                <Grid item>
+                  <Badge badgeContent={wishlistCount}  color="primary">
+                    <FavoriteIcon sx={{color:'black',cursor:'pointer' , marginRight:'10px'}} onClick={toggleFavoriteSidebar} />
+                  </Badge>
+                  <FavoriteSidebar data={wishlistData} shop={currentShop} isOpen={isFavoriteSidebarOpen} onClose={toggleFavoriteSidebar} remove={removeWishlistProduct} />
+                </Grid>
+                <Grid item>
+                  <Badge badgeContent={cartCount} color="primary">
+                    <ShoppingCartIcon sx={{color:'black',cursor:'pointer' , marginRight:'10px' }} onClick={toggleShoppingCartSidebar} />
+                  </Badge>
+                  <ShoppingCartSidebar shop={currentShop} dataArray={dataArray} subTotal={cartSubTotal} isOpen={isShoppingCartSidebarOpen} onClose={toggleShoppingCartSidebar} remove={removeCartProduct} updateCount={handleCart} />
+                </Grid>
+                <Grid item>
+                  {isLogged ? (
+                    <Link
+                      to={`/my-account/accountsettings`}
+                    >
+                      <Typography sx={{color:'black' , fontWeight:'bold', cursor:'pointer'}}><AccountCircleIcon /></Typography>
+                    </Link>
+                  ):(
+                    <>
+                      <Typography sx={{color:'black' , fontWeight:'bold', cursor:'pointer'}} onClick={handleOpenDialog}>Sign In</Typography>
+                      <Auth open={dialogOpen} handleClose={handleCloseDialog} />
+                    </>
+                  )}
+                </Grid>
+              </Grid>
+            </Grid>
+            </Grid>
         </Toolbar>
       </AppBar>
 
@@ -335,33 +389,34 @@ const Header = () => {
             <CloseIcon />
           </ListItem>
           <ListItem onClick={closeSidebar}>
-            <Link to={`/`}>
+            <Link to={`/`} style={{textDecoration:'none'}}>
               <Typography className="bold-text">Home</Typography>
             </Link>
           </ListItem>
+
           <ListItem onClick={closeSidebar}>
-            <Link to={`/`}>
-              <Typography className="bold-text">About</Typography>
+            <Typography sx={{fontWeight:'bold' , cursor:'pointer' , color: currentShop === 'MATE' ? '#ff4d04' : 'black'}} onClick={(e)=>{handleShop('MATE')}}>MakanMate</Typography>
+          </ListItem>
+           <ListItem onClick={closeSidebar}>
+            <Typography sx={{fontWeight:'bold' , cursor:'pointer' ,  color: currentShop === 'MART' ? '#ff4d04' : 'black'}} onClick={(e)=>{handleShop('MART')}}>MakanMart</Typography>
+          </ListItem> 
+          <ListItem>
+            <Link to={`https://www.panseas.com`} target='_blank' style={{ textDecoration: 'none', color: 'inherit' }} >
+              <Typography sx={{fontWeight:'bold' , cursor:'pointer' , color:'black'}}>Panseas Seafood</Typography>
             </Link>
           </ListItem>
-          {/* <ListItem onClick={closeSidebar}>
-            <Typography className="bold-text">Catering Menu</Typography>
-          </ListItem> */}
-          {/* <ListItem onClick={closeSidebar}>
-            <Typography className="bold-text">Panseas Seafood</Typography>
-          </ListItem> */}
           <ListItem onClick={closeSidebar}>
-            <Link to={`/events`}>
+            <Link to={`/events`} style={{textDecoration:'none'}}>
               <Typography className="bold-text">Events</Typography>
             </Link>
           </ListItem>
           <ListItem onClick={closeSidebar}>
-            <Link to={`/blogs`}>
+            <Link to={`/blogs`} style={{textDecoration:'none'}}>
               <Typography className="bold-text">Blogs</Typography>
             </Link>
           </ListItem>
           <ListItem onClick={closeSidebar}>
-            <Link to={'/contact-us'}>
+            <Link to={'/contact-us'} style={{textDecoration:'none'}}>
               <Typography className="bold-text">Contact Us</Typography>
             </Link>
           </ListItem>
@@ -379,42 +434,34 @@ const Header = () => {
               <Grid  container justifyContent='space-between'>
                 <Grid item>
                   <Link to={`/`} style={{ textDecoration: 'none', color: 'inherit' }} >
-                    <Typography sx={{fontWeight:'bold' , cursor:'pointer' , color:'black'}}>Homepage</Typography>
+                    <Typography sx={{fontWeight:'bold' , cursor:'pointer' , color:'black' , borderBottom: location.pathname === '/' ? '2px solid #ff4d04' : 'none'}}>Homepage</Typography>
                   </Link>
                 </Grid>
                 <Grid item>
-                  {/* <Link to={`/about`} style={{ textDecoration: 'none', color: 'inherit' }} > */}
                     <Typography sx={{fontWeight:'bold' , cursor:'pointer' , color: currentShop === 'MATE' ? '#ff4d04' : 'black'}} onClick={(e)=>{handleShop('MATE')}}>MakanMate</Typography>
-                  {/* </Link> */}
                 </Grid>
                 <Grid item>
-                  {/* <Link to={`/about`} style={{ textDecoration: 'none', color: 'inherit' }} > */}
                     <Typography sx={{fontWeight:'bold' , cursor:'pointer' ,  color: currentShop === 'MART' ? '#ff4d04' : 'black'}} onClick={(e)=>{handleShop('MART')}}>MakanMart</Typography>
-                  {/* </Link> */}
                 </Grid>
-                {/* <Grid item>
-                  <Link to={`/about`} style={{ textDecoration: 'none', color: 'inherit' }} >
-                    <Typography sx={{fontWeight:'bold' , cursor:'pointer' , color:'black'}}>Catering Menu</Typography>
-                  </Link>
-                </Grid> */}
-                {/* <Grid item>
-                  <Link to={`/`} style={{ textDecoration: 'none', color: 'inherit' }} >
+
+                <Grid item>
+                  <Link to={`https://www.panseas.com`} target='_blank' style={{ textDecoration: 'none', color: 'inherit' }} >
                     <Typography sx={{fontWeight:'bold' , cursor:'pointer' , color:'black'}}>Panseas Seafood</Typography>
                   </Link>
-                </Grid> */}
+                </Grid>
                 <Grid item>
                   <Link to={`/events`} style={{ textDecoration: 'none', color: 'inherit' }} >
-                    <Typography sx={{fontWeight:'bold' , cursor:'pointer' , color:'black'}}>Events</Typography>
+                    <Typography sx={{fontWeight:'bold' , cursor:'pointer' , color:'black', borderBottom: location.pathname === '/events' ? '2px solid #ff4d04' : 'none'}}>Events</Typography>
                   </Link>
                 </Grid>
                 <Grid item>
                 <Link to={`/blogs`} style={{ textDecoration: 'none', color: 'inherit' }} >
-                    <Typography sx={{fontWeight:'bold' , cursor:'pointer' , color:'black'}}>Blogs</Typography>
+                    <Typography sx={{fontWeight:'bold' , cursor:'pointer' , color:'black', borderBottom: location.pathname === '/blogs' ? '2px solid #ff4d04' : 'none'}}>Blogs</Typography>
                   </Link>
                 </Grid>
                 <Grid item>
                   <Link to={`/contact-us`} style={{ textDecoration: 'none', color: 'inherit' }} >
-                    <Typography sx={{fontWeight:'bold' , cursor:'pointer' , color:'black'}}>Contact Us</Typography>
+                    <Typography sx={{fontWeight:'bold' , cursor:'pointer' , color:'black',borderBottom: location.pathname === '/contact-us' ? '2px solid #ff4d04' : 'none'}}>Contact Us</Typography>
                   </Link>
                 </Grid>
               </Grid>
@@ -422,7 +469,7 @@ const Header = () => {
             <Grid item md={3.5} sx={{paddingLeft:'50px'}}>
              <Grid container direction='row' justifyContent='space-between'>
                 <Grid item md={6} sx={{display:'flex' , justifyContent:'center'}}>
-                  <TextField size='small' id="outlined-basic" label="Search" variant="outlined" />
+                  {/* <TextField size='small' id="outlined-basic" label="Search" variant="outlined" /> */}
                 </Grid>
                 <Grid item md={6} sx={{display:'flex' , justifyContent:'center'}}>
                   <Grid container direction='row' justifyContent='space-evenly' alignItems='center'>

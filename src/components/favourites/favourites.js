@@ -5,7 +5,6 @@ import CloseIcon from '@mui/icons-material/Close';
 import Divider from '@mui/material/Divider';
 import styled from 'styled-components';
 
-
 const StyledGridItem = styled.div`
   position: relative;
   display: flex;
@@ -51,14 +50,29 @@ const FavoriteSidebar = ({ data , shop, isOpen, onClose , remove }) => {
     window.location.href = `/product/${code}`;
   }
 
+
+  function truncateName(sentence, maxLength) {
+    if (sentence.length <= maxLength) {
+      return sentence;
+    }
+  
+    const truncated = sentence.substring(0, maxLength);
+    const lastSpaceIndex = truncated.lastIndexOf(' ');
+  
+    if (lastSpaceIndex === -1) {
+      return truncated + '...';
+    } else {
+      return truncated.substring(0, lastSpaceIndex) + '...';
+    }
+  }
   return (
     <Drawer
       anchor="right"
       open={isOpen}
       onClose={onClose}
       PaperProps={{
-        style: {
-          width: '30%',
+        sx: {
+          width: {xs:'100%' , sm:'100%' , md:'35%'},
           background: 'white',
         },
       }}
@@ -94,7 +108,7 @@ const FavoriteSidebar = ({ data , shop, isOpen, onClose , remove }) => {
                 </Grid>
                 <Grid item md={6} sx={{display:'flex' , flexDirection:'column' , justifyContent:'space-evenly'}}>
                   <Grid>
-                    <Typography onClick={(e)=>{handleProduct(product.ProductCode)}}>{product.ProductName}</Typography>
+                    <Typography onClick={(e)=>{handleProduct(product.ProductCode)}}>{truncateName(product.ProductName,45)}</Typography>
                   </Grid>
                   {/* <Grid container className='cartCalc2'>
                     <Typography sx={{border:'1px solid grey' , borderRadius:'50%'}}><AddIcon /></Typography>

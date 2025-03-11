@@ -5,7 +5,7 @@ import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { getAllAddress , removeAddress } from "../apiCalls";
+import { getAllAddress , removeAddress, getCurrencyData, getOrgData } from "../apiCalls";
 import AddAddress from "../components/accounts/addAddress";
 import DeleteIcon from '@mui/icons-material/Delete';
 import {  toast } from 'react-toastify';
@@ -44,6 +44,8 @@ const Checkout = () => {
 
     const [subTotal , setSubtotal ] = useState(0);
 
+    const [taxValue , setTax] = useState(0);
+
     const [shipping , setShipping ] = useState(5);
 
     const [level , setLevel] = useState(1);
@@ -56,6 +58,8 @@ const Checkout = () => {
 
     const [boxLoad , setboxload ] = useState(false);
 
+    const [taxPercentage , setTaxPerc] = useState(0);
+
 
     useEffect(() => {
         const storedUserId = ((JSON.parse(localStorage.getItem('makanUserToken')) || [])[0] || {}).B2CCustomerId;
@@ -63,17 +67,27 @@ const Checkout = () => {
         const cartArray = JSON.parse(localStorage.getItem('makanUserCart')) || {};
     
         const shopArray = cartArray[storedUserId] ? cartArray[storedUserId][shop] || [] : [];
+
     
         if (shopArray && shopArray.length) {
             let total = 0; 
+            let tax = 0;
     
             shopArray.forEach((item) => {
                 const subtotal = item.CartCount * item.SellingCost;
                 total += subtotal; 
+                const totalTax = (item.TaxPerc) / 100 * (item.SellingCost) * (item.CartCount);
+                tax += totalTax;
             });
-    
+            setTax(tax);
             setSubtotal(total);
+
+            const tperc = shopArray[0].TaxPerc;
+
+            setTaxPerc(tperc)
         }
+
+
     
         setCartArray(shopArray);
     
@@ -127,6 +141,45 @@ const Checkout = () => {
         });
       }
     },[ dialogOpen , open]);
+
+
+    const [orgData , setOrgData] = useState();
+
+    useEffect(()=>{
+
+      getOrgData()
+      .then((data)=>{
+        if(data.Data && data.Data.length){
+          setOrgData(data.Data[0]);
+        }
+      })
+      .catch((error) => {
+        toast.error(error);
+      });
+  
+    },[ ]);
+
+
+    const [CurrencyData , setCurrencyData] = useState();
+
+    useEffect(()=>{
+
+      if(orgData){
+        getCurrencyData(orgData.CurrencyId)
+        .then((data)=>{
+
+          if(data.Data && data.Data.length){
+            setCurrencyData(data.Data[0]);
+          }
+        })
+        .catch((error) => {
+          toast.error(error);
+        });
+      }
+
+  
+    },[orgData]);
+
 
 
     const handleRemoveAddress = () => {
@@ -205,7 +258,7 @@ const Checkout = () => {
         }];
       
         try {
-          const response = await fetch('https://stripe-payment-service.onrender.com/create-checkout-session', {
+          const response = await fetch('https://makanmatepayment.onrender.com/create-checkout-session', {
           // const response = await fetch('http://localhost:3001/create-checkout-session', {
             method: 'POST',
             headers: {
@@ -215,13 +268,15 @@ const Checkout = () => {
           });
       
           const session = await response.json();
-      
+          
           localStorage.setItem('paymentId', session.id);
       
           const stripe = await stripePromise;
+
       
           if (session.sessionId) {
-            stripe.redirectToCheckout({ sessionId: session.sessionId });
+            // stripe.redirectToCheckout({ sessionId: session.sessionId });
+            window.location.href = session.sessionUrl;
           } else {
             setboxload(false);
             toast.error('Some error occurred, please try again later');
@@ -254,6 +309,8 @@ const Checkout = () => {
         
             const shopArray = cartArray[storedUserId] ? cartArray[storedUserId][shop] || [] : [];
 
+            console.log(shopArray , "kkkkkkkkkkkkkkkkkkkkkk")
+
 
             let address;
 
@@ -278,17 +335,17 @@ const Checkout = () => {
                 "PostalCode": address.PostalCode,
                 "TaxCode": 1,
                 "TaxType": "E",
-                "TaxPerc": 0,
-                "CurrencyCode": "SGD",
-                "CurrencyRate": 1,
+                "TaxPerc": taxPercentage,
+                "CurrencyCode": CurrencyData.Code,
+                "CurrencyRate": CurrencyData.CurrencyRate,
                 "Total": Number(subTotal.toFixed(2)),
                 "BillDiscount": 0,
                 "BillDiscountPerc": 0,
                 "SubTotal": Number(subTotal.toFixed(2)),
-                "Tax": 0,
-                "NetTotal": Number((subTotal + shipping).toFixed(2)),
+                "Tax": Number(taxValue.toFixed(2)),
+                "NetTotal": Number((subTotal + shipping + taxValue).toFixed(2)),
                 "PaymentType": 'card',
-                "PaidAmount": 0,
+                "PaidAmount": Number((subTotal + shipping + taxValue).toFixed(2)),
                 "Remarks": "",
                 "IsActive": true,
                 "CreatedBy": "admin",
@@ -303,11 +360,10 @@ const Checkout = () => {
                 "Signatureimage": "",
                 "Cameraimage": "",
                 "OrderDateString": new Date().toISOString(),
-                "CreatedFrom": "",
-                "ShippingCost": Number(shipping),
+                "CreatedFrom": "b2c",
                 "url":'makanmate',
                 "CustomerEmail": makan.EmailId,
-                "DeliveryAmount": Number((subTotal + shipping).toFixed(2)),
+                "DeliveryAmount": Number(shipping),
                 "OrderDetail":
                     shopArray.map((item, index) => {
                     return {
@@ -323,23 +379,132 @@ const Checkout = () => {
                       "ItemDiscount": 0,
                       "ItemDiscountPerc": 0,
                       "SubTotal": Number(item.SellingCost * item.CartCount),
-                      // "Tax": (item.TaxPerc) / 100 * (item.SellingCost) * (item.CartCount),
-                      // "NetTotal": ((item.TaxPerc) / 100 * (item.SellingCost) * (item.CartCount)) + (item.SellingCost) * item.CartCount,
-                      "Tax": 0,
-                      "NetTotal": Number(item.SellingCost * item.CartCount),
+                      "Tax": (item.TaxPerc) / 100 * (item.SellingCost) * (item.CartCount),
+                      "NetTotal": ((item.TaxPerc) / 100 * (item.SellingCost) * (item.CartCount)) + (item.SellingCost) * item.CartCount,
+                      // "Tax": 0,
+                      // "NetTotal": Number(item.SellingCost * item.CartCount),
                       "TaxCode": 1,
                       "TaxType": "E",
-                      // "TaxPerc": item.TaxPerc,
-                      "TaxPerc":0,
+                      "TaxPerc": item.TaxPerc,
+                      // "TaxPerc":0,
                       "Remarks": "",
                       "CreatedBy": "admin",
                       "CreatedOn": new Date(),
                       "ChangedBy": "admin",
                       "ChangedOn": new Date(),
-                      "Weight": 0
+                      "Weight": 0,
+                      "OrderHeaderAddOn": (item.OrderHeaderAddOn && item.OrderHeaderAddOn.length) ? item.OrderHeaderAddOn : ""
                     }
                   })        
               }
+
+              // const temp2 =   {
+              //     "BillDiscount": 0,
+              //     "BillDiscountPerc": 0,
+              //     "BrachCode": "MATE",
+              //     "CameraImage": "",
+              //     "ChangedBy": "admin",
+              //     "ChangedOn": "2024-05-02T12:07:50.510Z",
+              //     "CreatedBy": "admin",
+              //     "CreatedFrom": "b2c",
+              //     "CreatedOn": "2024-05-02T12:07:50.510Z",
+              //     "CurrencyCode": "SGD",
+              //     "CurrencyRate": 1,
+              //     "CustomerAddress": "110 JURONG EAST STREET 13 123 12 HAPPY TALENT CHILDCARE CENTRE PTE. LTD., SINGAPORE 600110",
+              //     "CustomerId": "0002",
+              //     "CustomerName": "Dhanu",
+              //     "CustomerShipToAddress": "110 JURONG EAST STREET 13 123 12 HAPPY TALENT CHILDCARE CENTRE PTE. LTD., SINGAPORE 600110",
+              //     "CustomerShipToId": "",
+              //     "DeliveryAmount": 5,
+              //     "IsActive": true,
+              //     "Latitude": 0,
+              //     "Longitude": 0,
+              //     "NetTotal": 22.14,
+              //     "OrderDate": "2024-05-02T12:07:50.509Z",
+              //     "OrderDateString": "2024-05-02T12:07:50.510Z",
+              //     "OrderNo": "",
+              //     "OrgId": 2,
+              //     "PaidAmount": 22.14,
+              //     "PaymentType": "card",
+              //     "PostalCode": "600110",
+              //     "Remarks": "",
+              //     "SignatureImage": "",
+              //     "Status": 0,
+              //     "SubTotal": 16.8,
+              //     "Tax": 0.34,
+              //     "TaxCode": 1,
+              //     "TaxPerc": 2,
+              //     "TaxType": "E",
+              //     "Total": 16.8,
+              //     "url": "makanmate",
+              //     "OrderDetail":[
+              //       {
+              //         "ChangedBy": "admin",
+              //         "ChangedOn": "2024-05-02T12:07:50.510Z",
+              //         "CreatedBy": "admin",
+              //         "CreatedOn": "2024-05-02T12:07:50.510Z",
+              //         "Foc": 0,
+              //         "ItemDiscount": 0,
+              //         "ItemDiscountPerc": 0,
+              //         "NetTotal": 17.136,
+              //         "OrderNo": "",
+              //         "OrgId": 2,
+              //         "Price": 16.8,
+              //         "ProductCode": "000001",
+              //         "ProductName": "Bento Option B ($16.80 per pax – min 20 pax)",
+              //         "Qty": 1,
+              //         "Remarks": "",
+              //         "SlNo": 1,
+              //         "SubTotal": 16.8,
+              //         "Tax": 0.336,
+              //         "TaxCode": 1,
+              //         "TaxPerc": 2,
+              //         "TaxType": "E",
+              //         "Total": 16.8,
+              //         "Weight": 0,
+              //         "OrderHeaderAddOn":[
+              //           {
+              //             "ChangedBy": "user",
+              //             "ChangedOn": "2024-05-02T12:07:31.256Z",
+              //             "CreatedBy": "user",
+              //             "CreatedOn": "2024-05-02T12:07:31.256Z",
+              //             "CustomAddOnCode": "ADD2024-00002",
+              //             "IsActive": true,
+              //             "Limit": 4,
+              //             "Minimum": 6,
+              //             "OrderNo": "",
+              //             "OrgId": 2,
+              //             "Title": "Vegetable/Egg/Bean curd/Finger Food (Main)",
+              //             "OrderDetailAddOn":[
+              //               {
+              //                 "CreatedBy": "user",
+              //                 "CreatedOn": "2024-05-02T12:07:31.256Z",
+              //                 "CustomAddOnCode": "ADD2024-00002",
+              //                 "OrderNo": "",
+              //                 "OrgId": 2,
+              //                 "Price": 0,
+              //                 "ProductCode": "DEFAULT",
+              //                 "ProductName": "Sauteed Nyonya Chap Chye"
+              //               },
+              //               {
+              //                 "CreatedBy": "user",
+              //                 "CreatedOn": "2024-05-02T12:07:31.729Z",
+              //                 "CustomAddOnCode": "ADD2024-00002",
+              //                 "OrderNo": "",
+              //                 "OrgId": 2,
+              //                 "Price": 0,
+              //                 "ProductCode": "DEFAULT",
+              //                 "ProductName": "Cabbage with Black Fungus"
+              //               }
+                                     
+              //             ]
+              //           }
+              //         ]
+              //       }
+              //     ]
+              // }
+
+              console.log(temp , "lllllllllllllllllll")
 
               const existingOrderDetails = JSON.parse(localStorage.getItem('orderDetails')) || [];
               existingOrderDetails.length = 0; 

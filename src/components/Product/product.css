@@ -95,6 +95,9 @@
     font-size: 1.1rem !important;
     font-weight:bold !important;
 }
+.typo55{
+    font-size: 1.1rem !important;
+}
 .typo6{
     border: 2px solid #ff4d04;
     border-radius:50%;
@@ -116,6 +119,9 @@
 }
 
 @media screen and (max-width: 700px) {
+    .typo4{
+        font-size: 1.2rem !important;
+    }
     .deskscroll{
         display:none !important;
     }

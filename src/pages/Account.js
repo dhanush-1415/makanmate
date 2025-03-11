@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Grid } from '@mui/material';
+import { Grid , Button } from '@mui/material';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -17,11 +17,28 @@ import Address from '../components/accounts/address';
 import { useAuth } from '../components/Auth/AuthContet';
 import { UserbyCode } from '../apiCalls';
 import { toast } from 'react-toastify';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import Slide from '@mui/material/Slide';
+import DialogTitle from '@mui/material/DialogTitle';
+
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+
 
 function Account() {
     const { activepage } = useParams();
 
+    const [open, setOpen] = useState(false);
+
     const [user, setUserData] = useState({});
+
+
+    const handleClose = () => {
+      setOpen(false);
+    };
   
     useEffect(() => {
       let isMounted = true; // Flag to check if the component is mounted
@@ -66,9 +83,13 @@ function Account() {
     const { setLoggedOut } = useAuth();
     
     const handleLogout = () => {
-      setLoggedOut();
+      setOpen(true);
     };
     
+    const handleLog = () => {
+      setLoggedOut();
+      window.location.href = '/';
+    }
 
 
     const menuItems = [
@@ -82,6 +103,25 @@ function Account() {
 
     return (
         <>
+
+      <Dialog
+        open={open}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Are you sure to logout ?"}
+        </DialogTitle>
+        <DialogActions>
+          <Button onClick={handleLog}>Agree</Button>
+          <Button onClick={handleClose} >
+            Disagree
+          </Button>
+        </DialogActions>
+      </Dialog>
             <Grid>
                 <Grid container justifyContent='space-between' sx={{ width: '90%', margin: '0 auto' , padding:'50px 0px'}}>
                     <Grid item xs={12} sm={12} md={3.7} sx={{ border: '1px solid #e9eef2' }}>
@@ -123,7 +163,6 @@ function Account() {
                              <Link
                                 style={{ textDecoration: 'none', color: 'inherit' }} 
                                 onClick={handleLogout}
-                                to={`/`}
                             >
                                 <ListItemButton>
                                     <ListItemIcon>

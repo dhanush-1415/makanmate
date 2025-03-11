@@ -41,12 +41,6 @@ function Home() {
 
     // localStorage.removeItem('makanUserCart');
 
-    const cartArray = JSON.parse(localStorage.getItem('makanUserCart')) || {};
-
-
-    console.log(cartArray , "kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
-
-
     const fetchData = async () => {
       try {
         let response;
@@ -62,32 +56,58 @@ function Home() {
         const result = await response.json();
 
         if(data && data.length){
+          console.log("11111")
           if(result.Result && result.Result.length){
+            console.log("2222")
             if(result.Result[0].BranchCode === data[0].BranchCode){
+              console.log("3333")
               if(category){
+                console.log("4444")
                 if(result.Result[0].CategoryShortUrl === data[0].CategoryShortUrl){
-                  setData((prevData) => [...prevData, ...result.Result]);
+                  console.log("5555")
+                  if(result.Result[0].Code === data[0].Code){
+                    setData(result.Result);
+                  }else{
+                    setData((prevData) => [...prevData, ...result.Result]);
+                  }
                 }else{
+                  console.log("6666")
                   setData(result.Result);
                 }
               }else{
-                setData((prevData) => [...prevData, ...result.Result]);
+                    if(result.Result[0].Code === data[0].Code){
+                      setData(result.Result);
+                    }else{
+                      setData((prevData) => [...prevData, ...result.Result]);
+                    }
               }
             }else{
+              console.log("8888")
               if(result.Result && result.Result.length){
+                console.log("89999")
                 setData(result.Result);
               }else{
+                console.log("1010101")
                 setData([]);
               }
             }
           }else{
-            setData([]);
+            console.log("11111111")
+            if(!data && !data.length){
+              setData([]);
+            }
           }
         }else{
+          console.log("121212")
           if(result.Result && result.Result.length){
+            console.log("131313")
             setData(result.Result);
           }else{
-            setData([]);
+            if(!data && !data.length){
+              setData([]);
+              console.log("151515")
+            }
+            console.log("141414")
           }
         }
         setLoading(false);
@@ -139,7 +159,7 @@ function Home() {
     <>
     <HomeSlider />
     <Grid container spacing={2} direction='row' justifyContent="space-between" sx={{paddingTop:'50px' , width:'95%' , margin:'0 auto'}}>
-      <Grid item md={2.7} sx={{ maxHeight: '1000px', overflow: 'auto', '&::-webkit-scrollbar': { display: 'none' } }}>
+      <Grid item md={2.7} sx={{ width:'100%', maxHeight: '1000px', overflow: 'auto', '&::-webkit-scrollbar': { display: 'none' } }}>
         <Category shop={activeShop} />
       </Grid>
       <Grid item md={9.2} ref={productContainerRef} onScroll={handleScroll} id='productContainer' sx={{ maxHeight: '1000px', overflow: 'auto' , scrollbarWidth: 'thin', '&::-webkit-scrollbar': { width: '5px' }  }}>

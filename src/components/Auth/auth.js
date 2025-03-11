@@ -495,7 +495,7 @@ export default function Auth({ open, handleClose }) {
                 justifyContent="center"
                 textAlign="center"
                 gap={2.5}
-                sx={{padding:'20px 30px'}}
+                sx={{padding: {xs:'0px' , sm:'0px' , md:'20px 30px'} }}
               >
                 <Grid item>
                   <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
@@ -605,7 +605,7 @@ export default function Auth({ open, handleClose }) {
                 justifyContent="center"
                 textAlign="center"
                 gap={2.5}
-                sx={{padding:'20px 30px'}}
+                sx={{padding: {xs:'0px' , sm:'0px' , md:'20px 30px'} }}
               >
                 <Grid item>
                   <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
@@ -634,7 +634,7 @@ export default function Auth({ open, handleClose }) {
                 </Grid>
                 <Grid item>
                   <Grid container justifyContent='space-between'>
-                    <Grid item md={8.5}>
+                    <Grid item xs={12} sm={12} md={8.5}>
                       <TextField
                         id="outlined-basic-email"
                         label="Email"
@@ -648,7 +648,7 @@ export default function Auth({ open, handleClose }) {
                         helperText={formErrors.EmailId}
                       />
                     </Grid>
-                    <Grid item md={3.2}>
+                    <Grid item xs={12} sm={12} md={3.2}>
                       <Button
                         className='verifybtn'
                         sx={{
@@ -668,7 +668,7 @@ export default function Auth({ open, handleClose }) {
                 {otpCol && (
                     <Grid item>
                      <Grid container justifyContent='space-between'>
-                       <Grid item md={8.5}>
+                       <Grid item xs={12} sm={12} md={8.5}>
                          <TextField
                            id="outlined-basic-email"
                            label="OTP"
@@ -681,8 +681,8 @@ export default function Auth({ open, handleClose }) {
                            helperText={otpErrors.regOtp}
                          />
                        </Grid>
-                       <Grid item md={3.2}>
-                         <Button className='verifybtn' sx={{color:'white'}}
+                       <Grid item xs={12} sm={12} md={3.2}>
+                         <Button  className='verifybtn' sx={{color:'white'}}
                          onClick={handleSubmitOtp}
                          >
                          Submit
@@ -730,7 +730,7 @@ export default function Auth({ open, handleClose }) {
                 </Grid>
                 <Grid item>
                   <Grid container justifyContent='space-between'>
-                    <Grid item md={9}>
+                    <Grid item xs={12} sm={12} md={9}>
                       <TextField
                         id="outlined-basic-postal"
                         label="Postal Code"
@@ -743,7 +743,7 @@ export default function Auth({ open, handleClose }) {
                         helperText={formErrors.PostalCode}
                       />
                     </Grid>
-                    <Grid item md={2.5}>
+                    <Grid item xs={12} sm={12} md={2.5}>
                       <Button className='verifybtn' sx={{color:'white'}} onClick={getAddress}>{postalfetch}</Button>
                     </Grid>
                   </Grid>
@@ -761,7 +761,7 @@ export default function Auth({ open, handleClose }) {
                 </Grid>
                 <Grid item>
                   <Grid container justifyContent='space-between'>
-                    <Grid item md={5.7}>
+                    <Grid item xs={12} sm={12} md={5.7}>
                       <TextField
                         id="outlined-basic-floor"
                         label="Floor No"
@@ -772,7 +772,7 @@ export default function Auth({ open, handleClose }) {
                         onChange={handleChange}
                       />
                     </Grid>
-                    <Grid item md={5.7}>
+                    <Grid item xs={12} sm={12} md={5.7}>
                       <TextField
                         id="outlined-basic-unit"
                         label="Unit No"

@@ -94,21 +94,27 @@ function AccountSettings({ user, isLogged }) {
   };
 
   useEffect(() => {
-    const validateInput = (input, regex, errorMessage) => {
+    const validateInput = (input, regex) => {
       return input.trim() === '' || regex.test(input);
     };
-
+  
     const isValidName = validateInput(
       formData.B2CCustomerName,
-      /^[a-zA-Z\s]{3,30}$/,
-      'Name should be between 5 and 30 characters'
+      /^[a-zA-Z\s]{5,30}$/,
     );
-
+  
+    const isValidMobile = validateInput(
+      formData.MobileNo,
+      /^\+65\d{8}$/
+    );
+  
     setErrors((prevErrors) => ({
       ...prevErrors,
       name: isValidName ? '' : 'Name should be between 5 and 30 characters',
+      mobile: isValidMobile ? '' : 'Mobile number should be a valid Singapore number (e.g., +6512345678)',
     }));
-  }, [formData.B2CCustomerName]);
+  }, [formData.B2CCustomerName, formData.MobileNo]);
+  
 
   const handleSubmit = async () => {
     const nameError = errors.name;

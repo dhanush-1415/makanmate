@@ -75,7 +75,7 @@ function Orders(user) {
                   <StyledTableCell>Order Date</StyledTableCell>
                   <StyledTableCell>Order Status</StyledTableCell>
                   <StyledTableCell>Order Total</StyledTableCell>
-                  <StyledTableCell>Action</StyledTableCell>
+                  {/* <StyledTableCell>Action</StyledTableCell> */}
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -87,13 +87,12 @@ function Orders(user) {
                     <StyledTableCell>{row.OrderDateString}</StyledTableCell>
                     <StyledTableCell>{row.Status}</StyledTableCell>
                     <StyledTableCell>{row.NetTotal}</StyledTableCell>
-                    <StyledTableCell>
+                    {/* <StyledTableCell>
                       <Grid>
-                      {/* <button onClick={toggleOrderDetailSidebar}>View</button> */}
                       <button>View</button>
                       <OrderDetails isOpen={isOrderDetailSidebarOpen} onClose={toggleOrderDetailSidebar} />
                       </Grid>
-                    </StyledTableCell>
+                    </StyledTableCell> */}
                   </StyledTableRow>
                 ))}
               </TableBody>

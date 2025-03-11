@@ -12,18 +12,35 @@ import { getProductData , addWishlist , getWishlistData , removeWishlistData} fr
 import {toast  } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { makan } from '../../config';
+import { setCountValue , getCountValue } from '../../utility';
 
 const ProductList = ({data , shop , changeCount}) =>{
 
     const [count , setCount] = useState(1);
 
+    const [countValue , setChangeCount] = useState(0);
+
+
     const [show, setshow] = useState(false);
 
     const [isWishlist , setIsWishlist ] = useState(false);
 
+
+    useEffect(()=>{
+      setCountValue(countValue);
+    },[countValue])
+
     const handleClickOpen = (name) => {
       window.location.href = `/product/${name}`;
     };
+
+    useEffect(() => {
+      const interval = setInterval(() => {
+        setChangeCount(getCountValue());
+      }, 1000); 
+  
+      return () => clearInterval(interval);
+    }, []);
 
     useEffect(() => {
       const branchCode = shop;
@@ -103,6 +120,8 @@ const ProductList = ({data , shop , changeCount}) =>{
       }
     
       localStorage.setItem('makanUserCart', JSON.stringify(cartArray));
+      setChangeCount(countValue + 1);
+
     }else{
       toast.error("Please login to continue")
     }
@@ -137,6 +156,8 @@ const ProductList = ({data , shop , changeCount}) =>{
       }
     
       localStorage.setItem('makanUserCart', JSON.stringify(cartArray));
+      setChangeCount(countValue + 1);
+
     }else{
       toast.error("Please login to continue")
     }
@@ -204,8 +225,9 @@ const ProductList = ({data , shop , changeCount}) =>{
         addWishlist(data)
         .then((data) => {
           if (data.Message === 'Sucess') {
-              toast.success("Product added to wishlist");
+              // toast.success("Product added to wishlist");
               setIsWishlist(true);
+              setChangeCount(countValue + 1);
             } else {
               toast.error(data.Message + ' in adding product');
             }
@@ -238,6 +260,7 @@ const ProductList = ({data , shop , changeCount}) =>{
           if (data.Message === 'Sucess') {
               toast.success("Product removed from wishlist");
               setIsWishlist(false);
+              setChangeCount(countValue + 1);
             } else {
               toast.error(data.Message + ' in adding product');
             }
@@ -251,11 +274,28 @@ const ProductList = ({data , shop , changeCount}) =>{
       }
     }
 
+    function truncateName(sentence, maxLength) {
+      if (sentence.length <= maxLength) {
+        return sentence;
+      }
+    
+      const truncated = sentence.substring(0, maxLength);
+      const lastSpaceIndex = truncated.lastIndexOf(' ');
+    
+      if (lastSpaceIndex === -1) {
+        return truncated + '...';
+      } else {
+        return truncated.substring(0, lastSpaceIndex) + '...';
+      }
+    }
+    
+
+
     return(
         <>
         {/* <ToastContainer /> */}
         <Grid item xs={6} sm={4} md={4} lg={3} xl={2.4} className="image-hover-effect">
-           <Card sx={{cursor:'pointer' , minHeight:'340px'}}>
+           <Card sx={{cursor:'pointer' , minHeight: {xs:'200px' ,  sm:'230px' , md:'300px'}}}>
                 <CardContent>
                   <Grid container direction='column' justifyContent='space-between'>
                     <Grid item>
@@ -265,19 +305,38 @@ const ProductList = ({data , shop , changeCount}) =>{
                           < FavoriteBorderIcon sx={{float:'right'}} onClick={(e) => {handleWishlist(data.Code , data.Name)}}  />
                         )}
                       <Grid pb={2} item sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                          <div   onClick={(e) => {handleClickOpen(data.Code)}}>
+                          <div  onClick={(e) => {handleClickOpen(data.Code)}}>
+                            {data.EcommerceGalleryImages && data.EcommerceGalleryImages.length ? (
                               <img
-                                  src={data.ProductImagePath || 'https://makanmate.com/wp-content/uploads/2022/09/logo.png'}
-                                  alt='c1'
-                                  width='150px'
-                                  style={{
-                                      objectFit: 'cover',
-                                      maxWidth: '150px',
-                                      maxHeight: '140px',
-                                      paddingLeft: '10px'
-                                  }}
-                                  className="image-hover-effect"
+                              src={data.EcommerceGalleryImages[0].ImageFilePath || 'https://makanmate.com/wp-content/uploads/2022/09/logo.png'}
+                              alt='c1'
+                              width='150px'
+                              style={{
+                                  objectFit: 'cover',
+                                  maxWidth: '130px',
+                                  maxHeight: '140px',
+                                  minHeight: '135px',
+                                  marginLeft: '10px',
+                                  borderRadius:'10px',
+                              }}
+                              className="image-hover-effect"
                               />
+                            ):(
+
+                            <img
+                              src={data.ProductImagePath || 'https://makanmate.com/wp-content/uploads/2022/09/logo.png'}
+                              alt='c1'
+                              width='150px'
+                              style={{
+                                  objectFit: 'cover',
+                                  maxWidth: '130px',
+                                  maxHeight: '140px',
+                                  marginLeft: '10px',
+                                  borderRadius:'10px',
+                              }}
+                              className="image-hover-effect"
+                            />
+                            )}
                           </div>
                       </Grid>
                       {show ? (
@@ -335,7 +394,7 @@ const ProductList = ({data , shop , changeCount}) =>{
                           <Grid container sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: '100px' }}>
                               <Grid item>
                                   <Typography sx={{ fontWeight: 'bold', lineHeight: '1.5rem', fontSize: '1rem' }}>S$ {data.SellingCost.toFixed(2)}</Typography>
-                                  <Typography sx={{ padding: '10px 0px', fontSize: '14px', wordBreak: 'break-all' }}>{data.Name}</Typography>
+                                  <Typography sx={{ padding: '10px 0px', fontSize: '14px', wordBreak: 'break-all' }}>{truncateName(data.Name,40)}</Typography>
                               </Grid>
                           </Grid>
                       </Grid>

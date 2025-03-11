@@ -21,6 +21,115 @@ const StyledTableHead = styled(TableHead)({
     color: 'black',
   });
 
+
+
+  // {
+  //   "BillDiscount": 0,
+  //   "BillDiscountPerc": 0,
+  //   "BranchCode": "MATE",
+  //   "CameraImage": "",
+  //   "ChangedBy": "admin",
+  //   "ChangedOn": "2024-05-02T12:07:50.510Z",
+  //   "CreatedBy": "admin",
+  //   "CreatedFrom": "b2c",
+  //   "CreatedOn": "2024-05-02T12:07:50.510Z",
+  //   "CurrencyCode": "SGD",
+  //   "CurrencyRate": 1,
+  //   "CustomerAddress": "110 JURONG EAST STREET 13 123 12 HAPPY TALENT CHILDCARE CENTRE PTE. LTD., SINGAPORE 600110",
+  //   "CustomerId": "0002",
+  //   "CustomerName": "Dhanu",
+  //   "CustomerShipToAddress": "110 JURONG EAST STREET 13 123 12 HAPPY TALENT CHILDCARE CENTRE PTE. LTD., SINGAPORE 600110",
+  //   "CustomerShipToId": "",
+  //   "DeliveryAmount": 5,
+  //   "IsActive": true,
+  //   "Latitude": 0,
+  //   "Longitude": 0,
+  //   "NetTotal": 22.14,
+  //   "OrderDate": "2024-05-02T12:07:50.509Z",
+  //   "OrderDateString": "2024-05-02T12:07:50.510Z",
+  //   "OrderNo": "",
+  //   "OrgId": 2,
+  //   "PaidAmount": 22.14,
+  //   "PaymentType": "card",
+  //   "PostalCode": "600110",
+  //   "Remarks": "",
+  //   "SignatureImage": "",
+  //   "Status": 0,
+  //   "SubTotal": 16.8,
+  //   "Tax": 0.34,
+  //   "TaxCode": 1,
+  //   "TaxPerc": 2,
+  //   "TaxType": "E",
+  //   "Total": 16.8,
+  //   "url": "makanmate",
+  //   "OrderDetail":[
+  //     {
+  //       "ChangedBy": "admin",
+  //       "ChangedOn": "2024-05-02T12:07:50.510Z",
+  //       "CreatedBy": "admin",
+  //       "CreatedOn": "2024-05-02T12:07:50.510Z",
+  //       "Foc": 0,
+  //       "ItemDiscount": 0,
+  //       "ItemDiscountPerc": 0,
+  //       "NetTotal": 17.136,
+  //       "OrderNo": "",
+  //       "OrgId": 2,
+  //       "Price": 16.8,
+  //       "ProductCode": "000001",
+  //       "ProductName": "Bento Option B ($16.80 per pax – min 20 pax)",
+  //       "Qty": 1,
+  //       "Remarks": "",
+  //       "SlNo": 1,
+  //       "SubTotal": 16.8,
+  //       "Tax": 0.336,
+  //       "TaxCode": 1,
+  //       "TaxPerc": 2,
+  //       "TaxType": "E",
+  //       "Total": 16.8,
+  //       "Weight": 0,
+  //       "OrderHeaderAddOn":[
+  //         {
+  //           "ChangedBy": "user",
+  //           "ChangedOn": "2024-05-02T12:07:31.256Z",
+  //           "CreatedBy": "user",
+  //           "CreatedOn": "2024-05-02T12:07:31.256Z",
+  //           "CustomAddOnCode": "ADD2024-00002",
+  //           "IsActive": true,
+  //           "Limit": 4,
+  //           "Minimum": 6,
+  //           "OrderNo": "",
+  //           "OrgId": 2,
+  //           "Title": "Vegetable/Egg/Bean curd/Finger Food (Main)",
+  //           "OrderDetailAddOn":[
+  //             {
+  //               "CreatedBy": "user",
+  //               "CreatedOn": "2024-05-02T12:07:31.256Z",
+  //               "CustomAddOnCode": "ADD2024-00002",
+  //               "OrderNo": "",
+  //               "OrgId": 2,
+  //               "Price": 0,
+  //               "ProductCode": "DEFAULT",
+  //               "ProductName": "Sauteed Nyonya Chap Chye"
+  //             },
+  //             {
+  //               "CreatedBy": "user",
+  //               "CreatedOn": "2024-05-02T12:07:31.729Z",
+  //               "CustomAddOnCode": "ADD2024-00002",
+  //               "OrderNo": "",
+  //               "OrgId": 2,
+  //               "Price": 0,
+  //               "ProductCode": "DEFAULT",
+  //               "ProductName": "Cabbage with Black Fungus"
+  //             }
+                            
+  //           ]
+  //         }
+  //       ]
+  //     }
+  //   ]
+  // }
+
+  
 const Success = () => {
 
     const [orderData , setOrderData] = useState();
@@ -33,6 +142,8 @@ const Success = () => {
         .then((data)=>{
           if(data.Message === 'Sucess'){
             toast.success("Order placed successfully")
+          }else{
+            toast.error("Order is not placed !")
           }
         })
         .catch((error) => {
@@ -47,7 +158,6 @@ const Success = () => {
       const cartArray = JSON.parse(localStorage.getItem('makanUserCart')) || {};
 
       const storedUserId = ((JSON.parse(localStorage.getItem('makanUserToken')) || [])[0] || {}).B2CCustomerId;
-
 
       if (orderDetails && orderDetails.length) {
         setOrderData(orderDetails);
@@ -121,7 +231,7 @@ const Success = () => {
                 </Grid>
                 <Grid item>
                     <Typography sx={{fontWeight:'bold' , textAlign:'right' , padding:'5px 0'}}>S$ {orderData && orderData.length && orderData[0].SubTotal}</Typography>
-                    <Typography sx={{fontWeight:'bold' , textAlign:'right' , padding:'5px 0'}}>S$ {orderData && orderData.length && orderData[0].ShippingCost.toFixed(2)}</Typography>
+                    <Typography sx={{fontWeight:'bold' , textAlign:'right' , padding:'5px 0'}}>S$ {orderData && orderData.length && orderData[0].DeliveryAmount.toFixed(2)}</Typography>
                     <Typography sx={{fontWeight:'bold' , textAlign:'right' , padding:'5px 0'}}>S$ {orderData && orderData.length && orderData[0].NetTotal}</Typography>
                 </Grid>
             </Grid>

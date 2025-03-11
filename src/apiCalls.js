@@ -29,7 +29,7 @@ export const getPostalAddress = async (postalCode) => {
 
 
 export const UserbyEmail = async (data) => {
-    const url = `${makan.baseUrl}/B2CCustomerRegister/GetbyEmail?OrganizationId=${data.orgID}&EmailId=${data.email}`;
+    const url = `${makan.baseUrl}/B2CCustomerRegister/GetbyEmail?OrganizationId=${makan.orgId}&EmailId=${data.email}`;
     const options = {
       method: 'GET',
       headers: {
@@ -49,7 +49,7 @@ export const UserbyEmail = async (data) => {
 
 
   export const UserbyCode = async (data) => {
-    const url = `${makan.baseUrl}/B2CCustomerRegister/Getbycode?OrganizationId=${data[0].OrgId}&B2CCustomerId=${data[0].B2CCustomerId}`;
+    const url = `${makan.baseUrl}/B2CCustomerRegister/Getbycode?OrganizationId=${makan.orgId}&B2CCustomerId=${data[0].B2CCustomerId}`;
     const options = {
       method: 'GET',
       headers: {
@@ -89,7 +89,7 @@ export const UserbyEmail = async (data) => {
   };
 
 export const sendOTP = async (data) => {
-    const url = `${makan.baseUrl}/SendOTP/SendOTP?OrganizationId=${data.orgID}&Email=${data.email}`;
+    const url = `${makan.baseUrl}/SendOTP/SendOTP?OrganizationId=${makan.orgId}&Email=${data.email}`;
     const options = {
       method: 'POST',
     };
@@ -197,7 +197,7 @@ export const registerUser = async (data) => {
 
 
   export const getAllAddress = async (data) => {
-    const url = `${makan.baseUrl}/B2CCustomerDeliveryAddress/GetAll?OrganizationId=${data.OrgId}&CustomerId=${data.B2CCustomerId}`;
+    const url = `${makan.baseUrl}/B2CCustomerDeliveryAddress/GetAll?OrganizationId=${makan.orgId}&CustomerId=${data.B2CCustomerId}`;
     const options = {
       method: 'GET',
       headers: {
@@ -217,7 +217,7 @@ export const registerUser = async (data) => {
 
 
   export const removeAddress = async (data) => {
-    const url = `${makan.baseUrl}/B2CCustomerDeliveryAddress/Remove?OrganizationId=${data.OrgId}&CustomerId=${data.CustomerId}&DeliveryId=${data.DeliveryId}&UserName=${data.name}`;
+    const url = `${makan.baseUrl}/B2CCustomerDeliveryAddress/Remove?OrganizationId=${makan.orgId}&CustomerId=${data.CustomerId}&DeliveryId=${data.DeliveryId}&UserName=${data.name}`;
     const options = {
       method: 'GET',
       headers: {
@@ -261,7 +261,7 @@ export const registerUser = async (data) => {
 
   export const getAllCategories = async (data) => {
 
-    const url = `${makan.baseUrl}/Category/GetAll?OrganizationId=${data.OrgId}`;
+    const url = `${makan.baseUrl}/Category/GetAll?OrganizationId=${makan.orgId}`;
     const options = {
       method: 'GET',
       headers: {
@@ -283,7 +283,7 @@ export const registerUser = async (data) => {
 
   export const getProductData = async (data) => {
 
-    const url = `${makan.baseUrl}/Product/GetAllWithImage?OrganizationId=${data.OrgId}&ProductCode=${data.code}`;
+    const url = `${makan.baseUrl}/Product/GetAllWithImage?OrganizationId=${makan.orgId}&ProductCode=${data.code}`;
     const options = {
       method: 'GET',
       headers: {
@@ -329,7 +329,7 @@ export const registerUser = async (data) => {
   
   export const getWishlistData = async (data) => {
 
-    const url = `${makan.baseUrl}/B2CCustomerWishList/GetByCustomer?OrganizationId=${data.OrgId}&CustomerId=${data.code}`;
+    const url = `${makan.baseUrl}/B2CCustomerWishList/GetByCustomer?OrganizationId=${makan.orgId}&CustomerId=${data.code}`;
     const options = {
       method: 'GET',
       headers: {
@@ -350,9 +350,8 @@ export const registerUser = async (data) => {
 
   export const removeWishlistData = async (data) => {
 
-    const url = `${makan.baseUrl}/B2CCustomerWishList/Remove?OrganizationId=${data.OrgId}&CustomerId=${data.code}&ProductCode=${data.pcode}&UserName=User`;
+    const url = `${makan.baseUrl}/B2CCustomerWishList/Remove?OrganizationId=${makan.orgId}&CustomerId=${data.code}&ProductCode=${data.pcode}&UserName=User`;
 
-    console.log(url , "oooooooooooo")
     const options = {
       method: 'GET',
       headers: {
@@ -372,7 +371,7 @@ export const registerUser = async (data) => {
 
 
   export const createCustomerOrder = async (data) => {
-    const url = `${makan.baseUrl}/B2CCustomerOrder/Create`;
+    const url = `${makan.baseUrl}/B2CCustomerOrder/SaveOrderWithAddOn`;
     const options = {
       method: 'POST',
       headers: {
@@ -396,7 +395,90 @@ export const registerUser = async (data) => {
 
 
   export const getAllOrders = async (data) => {
-    const url = `${makan.baseUrl}/B2CCustomerOrder/GetHeaderSearch?searchModel.organisationId=${data.OrgId}&searchModel.customerCode=${data.B2CCustomerId}`;
+    const url = `${makan.baseUrl}/B2CCustomerOrder/GetHeaderSearch?searchModel.organisationId=${makan.orgId}&searchModel.customerCode=${data.B2CCustomerId}`;
+    const options = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    };
+  
+    return fetch(url, options).then(
+      (response) => {
+        return response.json();
+      },
+      (error) => {
+        return error;
+      }
+    );
+  };
+
+
+  export const getProductAddOnData = async (data) => {
+
+    const url = `${makan.baseUrl}/ProductCustomAddOn/GetByCode?OrganizationId=${makan.orgId}&ProductCode=${data.code}`;
+    const options = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    };
+  
+    return fetch(url, options).then(
+      (response) => {
+        return response.json();
+      },
+      (error) => {
+        return error;
+      }
+    );
+  };
+
+
+  export const getAllBanners = async (data) => {
+    const url = `${makan.baseUrl}/B2CBannerImage/GetAll?OrganizationId=${makan.orgId}`;
+    const options = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    };
+  
+    return fetch(url, options).then(
+      (response) => {
+        return response.json();
+      },
+      (error) => {
+        return error;
+      }
+    );
+  };
+
+
+  export const getCurrencyData = async (data) => {
+
+    const url = `${makan.baseUrl}/Currency/GetAll?OrganizationId=${makan.orgId}&CurrencyCode=${data}`;
+
+    const options = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    };
+  
+    return fetch(url, options).then(
+      (response) => {
+        return response.json();
+      },
+      (error) => {
+        return error;
+      }
+    );
+  };
+
+  export const getOrgData = async (data) => {
+
+    const url = `${makan.baseUrl}/Organization/GetOrganizationbycode?OrganizationId=${makan.orgId}`;
     const options = {
       method: 'GET',
       headers: {
